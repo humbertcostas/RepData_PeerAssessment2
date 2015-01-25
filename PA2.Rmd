@@ -134,11 +134,13 @@ quest2
 # Results
 
 ## Human impact
+Los tornados son los eventos que más daño humano provocan con diferencia.
 ```{r cache=TRUE, echo=FALSE}
 ggplot(data=quest1, aes(x=EVTYPE, y=TOTAL)) + geom_bar(stat="identity") + coord_flip() + xlab("") + ylab("Affected peolpe") + ggtitle("Ten most dangerous events")
 ```
 
 ## Economic consequences
+Los tornados son los eventos que más costes economicos provocan, seguidos de cerca por los thunderstorm wind y las flood.
 ```{r cache=TRUE, echo=FALSE}
 ggplot(data=quest2, aes(x=EVTYPE, y=TOTAL)) + geom_bar(stat="identity") + coord_flip() + xlab("") + ylab("Economic costs") + ggtitle("Ten most dangerous events")
 ```
