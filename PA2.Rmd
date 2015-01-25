@@ -1,0 +1,18 @@
+---
+title: "Storm Data Analysis"
+author: "Humbert Costas"
+date: "Sunday, January 25, 2015"
+output: html_document
+---
+# Synopsis
+Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern.
+
+This project involves exploring the U.S. National Oceanic and Atmospheric Administration's ([NOAA](http://www.noaa.gov/)) storm [database](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf). This database tracks characteristics of major storms and weather events in the United States, including when and where they occur, as well as estimates of any fatalities, injuries, and property damage.
+
+# Data Processing
+You can download the [storm data](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2) used in this analysis.
+
+```{r eval=FALSE, echo=FALSE}
+download.file(url='https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2', destfile='stormdata.csv.bz2')
+rawdata <- read.csv('stormdata.csv.bz2')
+```
