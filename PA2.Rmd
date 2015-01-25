@@ -17,9 +17,6 @@ This code puts the data in *rawdata* variable:
 # download.file(url='https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2', destfile='stormdata.csv.bz2')
 rawdata <- read.csv('stormdata.csv.bz2')
 ```
-# Data Analysis
-```{r}
-```
 
 Vamos a analizar los datos empezando por sus dimensiones. El conjunto de datos comprende `r nrow(rawdata)` observaciones de `r ncol(rawdata)` variables cada una, concretamente:
 
@@ -29,11 +26,11 @@ names(rawdata)
 
 En este analisis nos vamos a fijar en los tipos de eventos (EVTYPE) registrados y las variables relacionadas con la salud de la población y costes económicos.
 
-La clasificación de los eventos metereologicos no parece seguir una clasificación muy cuidada. Se trata de `r length(levels(rawdata$EVTYPE))` tipos distintos de eventos, por ejemplo, veamos los 20 primeros: 
+La clasificación de los eventos metereologicos no parece seguir una clasificación muy cuidada. Se trata de `r length(levels(rawdata$EVTYPE))` tipos distintos de eventos, por ejemplo, veamos los 20 ultimos: 
 
 ```{r echo=FALSE}
 events <- levels(rawdata$EVTYPE)
-head(events,20)
+tail(events,20)
 ```
 
 Antes de trabajar con estos datos vamos a convertir los *EVTYPE* a mayusculas. 
@@ -67,6 +64,11 @@ category_name <- "HEAT"
 category <- as.character(events[1:nrow(events) %in% grep(category_filter, events$EVTYPE),])
 rawdata$EVTYPE[rawdata$EVTYPE %in% category] <- category_name
 
+category_filter <- ".*WINTER.*STORM.*"
+category_name <- "WINTER STORM"
+category <- as.character(events[1:nrow(events) %in% grep(category_filter, events$EVTYPE),])
+rawdata$EVTYPE[rawdata$EVTYPE %in% category] <- category_name
+
 category_filter <- ".*COLD.*|.*FROST.*|.*FREEZE.*"
 category_name <- "COLD"
 category <- as.character(events[1:nrow(events) %in% grep(category_filter, events$EVTYPE),])
@@ -96,14 +98,22 @@ category_filter <- ".*RIP CURRENT.*"
 category_name <- "RIP CURRENTS"
 category <- as.character(events[1:nrow(events) %in% grep(category_filter, events$EVTYPE),])
 rawdata$EVTYPE[rawdata$EVTYPE %in% category] <- category_name
+
+category_filter <- ".*AVALANCH.*"
+category_name <- "AVALANCHE"
+category <- as.character(events[1:nrow(events) %in% grep(category_filter, events$EVTYPE),])
+rawdata$EVTYPE[rawdata$EVTYPE %in% category] <- category_name
 ```
 
 # Questions:
 
 ## Across the United States, which types of events are most harmful with respect to population health?
 ```{r cache=TRUE}
+library(ggplot2)
 human_damages <- aggregate(cbind(FATALITIES, INJURIES) ~ EVTYPE, rawdata, sum)
-head(human_damages[order(-human_damages$FATALITIES, -human_damages$INJURIES), ], 10)
+human_damages$TOTAL <- human_damages$FATALITIES + human_damages$INJURIES
+quest1 <- head(human_damages[order(-human_damages$TOTAL, -human_damages$FATALITIES, -human_damages$INJURIES), ], 10)
+qplot(x=TOTAL, y=EVTYPE, data = quest1)
 ```
 
 ```{r}
