@@ -43,7 +43,7 @@ names(events)[1] = "EVTYPE"
 Una vez normalizados los textos, se categorizan agregarando los eventos más genericos, tales como HURRICANE, HEAT, WIND, FLOOD, etc. 
 
 ```{r echo=FALSE, cache=TRUE}
-# Para categorizar eventos usaremos la variable category
+# Para categorizar eventos usaremos la variable category que contiene aquellas palabras que se categorizaran como category_name
 category_filter <- ".*TSTM.*|.*THUNDERSTORM.*"
 category_name <- "THUNDERSTORM WIND"
 category <- as.character(events[1:nrow(events) %in% grep(category_filter, events$EVTYPE),])
@@ -108,15 +108,37 @@ rawdata$EVTYPE[rawdata$EVTYPE %in% category] <- category_name
 # Questions:
 
 ## Across the United States, which types of events are most harmful with respect to population health?
-```{r cache=TRUE}
+```{r echo=TRUE, cache=TRUE}
+# Load ggplot2 library
 library(ggplot2)
+# Creamos un data frame con la suma de los injuries and fatalities por cada event type
 human_damages <- aggregate(cbind(FATALITIES, INJURIES) ~ EVTYPE, rawdata, sum)
+# Añadimos una variable con el total de daño humano
 human_damages$TOTAL <- human_damages$FATALITIES + human_damages$INJURIES
+# Ordenamos segun el total y representamos el TOP10
 quest1 <- head(human_damages[order(-human_damages$TOTAL, -human_damages$FATALITIES, -human_damages$INJURIES), ], 10)
-qplot(x=TOTAL, y=EVTYPE, data = quest1)
+quest1
 ```
 
-```{r}
-#rawdata$PROPDMG
+## Across the United States, which types of events have the greatest economic consequences?
+```{r echo=TRUE, cache=TRUE}
+# Creamos un data frame con la suma de los damages por cada event type
+cost<-aggregate(cbind(PROPDMG, CROPDMG) ~ EVTYPE , rawdata, sum)
+# Añadimos una variable con el total del daño economico
+cost$TOTAL <- cost$PROPDMG + cost$CROPDMG
+# Ordenamos segun el total y representamos el TOP10
+quest2 <- head(cost[order(-cost$TOTAL, -cost$PROPDMG, -cost$CROPDMG), ], 10)
+quest2
 ```
+
 # Results
+
+## Human impact
+```{r cache=TRUE, echo=FALSE}
+ggplot(data=quest1, aes(x=EVTYPE, y=TOTAL)) + geom_bar(stat="identity") + coord_flip() + xlab("") + ylab("Affected peolpe") + ggtitle("Ten most dangerous events")
+```
+
+## Economic consequences
+```{r cache=TRUE, echo=FALSE}
+ggplot(data=quest2, aes(x=EVTYPE, y=TOTAL)) + geom_bar(stat="identity") + coord_flip() + xlab("") + ylab("Economic costs") + ggtitle("Ten most dangerous events")
+```
