@@ -65,9 +65,62 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </div>
 <div id="data-processing" class="section level1">
 <h1>Data Processing</h1>
-<p>You can download the <a href="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2">storm data</a> used in this analysis.</p>
-<pre class="r"><code>download.file(url='https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2', destfile='stormdata.csv.bz2')
+<p>You can download the <a href="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2">storm data</a> used in this analysis, to check what’s going on in this paper.</p>
+<p>This code puts the data in <em>rawdata</em> variable:</p>
+<pre class="r"><code># download.file(url='https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2', destfile='stormdata.csv.bz2')
 rawdata &lt;- read.csv('stormdata.csv.bz2')</code></pre>
+</div>
+<div id="data-analysis" class="section level1">
+<h1>Data Analysis</h1>
+<p>Vamos a analizar los datos empezando por sus dimensiones. El conjunto de datos comprende 902297 observaciones de 37 variables cada una, concretamente:</p>
+<pre class="r"><code>names(rawdata)</code></pre>
+<pre><code>##  [1] &quot;STATE__&quot;    &quot;BGN_DATE&quot;   &quot;BGN_TIME&quot;   &quot;TIME_ZONE&quot;  &quot;COUNTY&quot;    
+##  [6] &quot;COUNTYNAME&quot; &quot;STATE&quot;      &quot;EVTYPE&quot;     &quot;BGN_RANGE&quot;  &quot;BGN_AZI&quot;   
+## [11] &quot;BGN_LOCATI&quot; &quot;END_DATE&quot;   &quot;END_TIME&quot;   &quot;COUNTY_END&quot; &quot;COUNTYENDN&quot;
+## [16] &quot;END_RANGE&quot;  &quot;END_AZI&quot;    &quot;END_LOCATI&quot; &quot;LENGTH&quot;     &quot;WIDTH&quot;     
+## [21] &quot;F&quot;          &quot;MAG&quot;        &quot;FATALITIES&quot; &quot;INJURIES&quot;   &quot;PROPDMG&quot;   
+## [26] &quot;PROPDMGEXP&quot; &quot;CROPDMG&quot;    &quot;CROPDMGEXP&quot; &quot;WFO&quot;        &quot;STATEOFFIC&quot;
+## [31] &quot;ZONENAMES&quot;  &quot;LATITUDE&quot;   &quot;LONGITUDE&quot;  &quot;LATITUDE_E&quot; &quot;LONGITUDE_&quot;
+## [36] &quot;REMARKS&quot;    &quot;REFNUM&quot;</code></pre>
+<p>En este analisis nos vamos a fijar en los tipos de eventos (EVTYPE) registrados y las variables relacionadas con la salud de la población y costes económicos.</p>
+<p>La clasificación de los eventos metereologicos no parece seguir una clasificación muy cuidada. Se trata de 985 tipos distintos de eventos, por ejemplo, veamos los 20 primeros:</p>
+<pre><code>##  [1] &quot;   HIGH SURF ADVISORY&quot;  &quot; COASTAL FLOOD&quot;        
+##  [3] &quot; FLASH FLOOD&quot;           &quot; LIGHTNING&quot;            
+##  [5] &quot; TSTM WIND&quot;             &quot; TSTM WIND (G45)&quot;      
+##  [7] &quot; WATERSPOUT&quot;            &quot; WIND&quot;                 
+##  [9] &quot;?&quot;                      &quot;ABNORMAL WARMTH&quot;       
+## [11] &quot;ABNORMALLY DRY&quot;         &quot;ABNORMALLY WET&quot;        
+## [13] &quot;ACCUMULATED SNOWFALL&quot;   &quot;AGRICULTURAL FREEZE&quot;   
+## [15] &quot;APACHE COUNTY&quot;          &quot;ASTRONOMICAL HIGH TIDE&quot;
+## [17] &quot;ASTRONOMICAL LOW TIDE&quot;  &quot;AVALANCE&quot;              
+## [19] &quot;AVALANCHE&quot;              &quot;BEACH EROSIN&quot;</code></pre>
+<p>Antes de trabajar con estos datos vamos a convertir los <em>EVTYPE</em> a mayusculas.</p>
+<pre class="r"><code>events &lt;- as.data.frame(toupper(events))
+names(events)[1] = &quot;EVTYPE&quot;</code></pre>
+<p>Una vez normalizados los textos, se categorizan agregarando los eventos más genericos, tales como HURRICANE, HEAT, WIND, FLOOD, etc.</p>
+</div>
+<div id="questions" class="section level1">
+<h1>Questions:</h1>
+<div id="across-the-united-states-which-types-of-events-are-most-harmful-with-respect-to-population-health" class="section level2">
+<h2>Across the United States, which types of events are most harmful with respect to population health?</h2>
+<pre class="r"><code>human_damages &lt;- aggregate(cbind(FATALITIES, INJURIES) ~ EVTYPE, rawdata, sum)
+head(human_damages[order(-human_damages$FATALITIES, -human_damages$INJURIES), ], 10)</code></pre>
+<pre><code>##                EVTYPE FATALITIES INJURIES
+## 548           TORNADO       5633    91346
+## 193              HEAT       2955     8780
+## 112             FLOOD       1523     8603
+## 305         LIGHTNING        816     5230
+## 540 THUNDERSTORM WIND        754     9544
+## 48               COLD        445      323
+## 627              WIND        444     1928
+## 400       RIP CURRENT        368      232
+## 14          AVALANCHE        224      170
+## 401      RIP CURRENTS        209      297</code></pre>
+<pre class="r"><code>#rawdata$PROPDMG</code></pre>
+</div>
+</div>
+<div id="results" class="section level1">
+<h1>Results</h1>
 </div>
 
 
